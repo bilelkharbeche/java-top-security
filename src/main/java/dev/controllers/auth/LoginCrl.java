@@ -40,13 +40,14 @@ public class LoginCrl extends HttpServlet {
 			req.getSession().setAttribute("connectedUser", user);
 
 			String key = "secret";
-			String data = user.getFirstname() + ", " + user.getLastname() + ", " + user.getLogin() + ", "
+			String data = user.getFirstname() + "," + user.getLastname() + "," + user.getLogin() + ","
 					+ user.getAdmin();
-			String signature = new HmacUtils(HmacAlgorithms.HMAC_SHA_256, key).hmacHex(data);
+			String signature = new HmacUtils(HmacAlgorithms.HMAC_SHA_256, key)
+					.hmacHex(Base64.getUrlEncoder().encodeToString(data.getBytes()));
 
 			String cookieValue = Base64.getUrlEncoder().encodeToString(data.getBytes()) + "." + signature;
 
-			Cookie monCookie = new Cookie("BibixCook", cookieValue);
+			Cookie monCookie = new Cookie("AUTH", cookieValue);
 			monCookie.setHttpOnly(true);
 			resp.addCookie(monCookie);
 
